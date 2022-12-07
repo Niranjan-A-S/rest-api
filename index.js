@@ -59,7 +59,7 @@ app.post("/api/customers", (req, res) => {
 
   // if (error) {
   //   res.status(400).send(error.details[0].message);
-  //   return;
+  //   return
   // }
   //Some Problem with the Joi package
 
