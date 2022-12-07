@@ -1,3 +1,4 @@
+const { request } = require("express");
 const express = require("express");
 const Joi = require("joi");
 const JOI = require("joi");
@@ -39,23 +40,54 @@ app.get("/api/customers", (req, res) => res.send(customers));
 //Displaying a particular customer
 app.get("/api/customers/:id", (req, res) => {
   const customer = customers.find((c) => c.id === parseInt(req.params.id));
-  if (!customer) res.status(404).send("<h2>Customer not found</h2>");
+  !customer && res.status(404).send("<h2>Customer not found</h2>");
   res.send(customer);
 });
 
 //Create request handlers
 
 //Validating the customer
-const validateCustomer = (customer) => {
-  const schema = { title: Joi.string().min(3).required() };
+// const validateCustomer = (customer) => {
+//   const schema = { title: Joi.string().min(3).required() };
 
-  return Joi.validate(customer, schema);
-};
+//   return Joi.validate(customer, schema);
+// };
 
 //Create New Customer Information
 app.post("/api/customers", (req, res) => {
-  const {} = validateCustomer(req.body);
-  //new repo
+  // const { error } = validateCustomer(req.body);
+
+  // if (error) {
+  //   res.status(400).send(error.details[0].message);
+  //   return;
+  // }
+  //Some Problem with the Joi package
+
+  //Increment customer id
+  const customer = { title: req.body.title, id: customers.length + 1 };
+
+  customers.push(customer);
+  res.send(customer);
+});
+
+//Updating request handlers
+
+//Updating existing information of the customer
+app.put("/api/customers/:id", (req, res) => {
+  const customer = customers.find((c) => c.id === +req.params.id);
+  !customer && res.status(404).send("<h1>Customer not found</h1>");
+
+  customer.title = customer.title + req.body.title;
+  res.send(customer);
+});
+
+//Deleting request handlers
+app.delete("/api/customers/:id", (req, res) => {
+  const customer = customers.find((c) => c.id === +req.params.id);
+  !customer && res.status(404).send("<h1>Customer not found</h1>");
+
+  customers.splice(customers.indexOf(customer), 1);
+  res.send(customer);
 });
 
 //PORT ENVIRONMENT VARIABLE
